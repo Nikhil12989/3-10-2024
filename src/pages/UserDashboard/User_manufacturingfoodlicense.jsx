@@ -77,7 +77,7 @@ const User_manufacturingfoodlicense = () => {
       }
       for (const key in documents) {
         if (documents[key]) {
-          formData.append(key, documents[key]);
+          formData.append(`documents.${key}`, documents[key]); // Match the structure expected by the backend
         }
       }
       try {

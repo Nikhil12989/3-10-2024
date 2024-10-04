@@ -79,11 +79,12 @@ const User_gazette_name = () => {
         for (const key in licenseData) {
             formData.append(key, licenseData[key]);
         }
-        for (const key in documents) {
+         // Append document data
+         for (const key in documents) {
             if (documents[key]) {
-                formData.append(key, documents[key]);
+                formData.append(`documents.${key}`, documents[key]); // Match the structure expected by the backend
             }
-        }
+          }
         try {
             const response = await axios.put(
                 `http://192.168.1.50:5000/api/nameChangeGazette/updateGazetteNameChange/${id}`,

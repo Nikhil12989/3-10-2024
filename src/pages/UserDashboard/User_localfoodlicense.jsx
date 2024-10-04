@@ -14,13 +14,13 @@ const User_localfoodlicense = () => {
     email: "",
     mobileNumber: "",
     businessAddress: "",
-    Status: "In-Progress",
+    licenseRequireYears: "",
     formPrice: "",
     application_type: "",
     submitNote: "",
     completedNote: "",
+    Status: "In-Progress",
     rejectedNote: "",
-    licenseRequireYears: "",
   });
 
   const [documents, setDocuments] = useState({
@@ -29,7 +29,10 @@ const User_localfoodlicense = () => {
     photo: null,
     electricBill: null,
     rentAggrement: null,
+    shopActLicense: null,
+    uddyamAadhar: null,
   });
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const statusEnum = ["In-Progress", "Submitted", "Rejected", "Completed"];
@@ -42,7 +45,6 @@ const User_localfoodlicense = () => {
           `http://192.168.1.50:5000/api/localFoodLicense/getLocalFoodLicense/${id}`
         );
         const data = response.data;
-        console.log("Fetched Data: ", data);
         setLicenseData({
           fullName: data.fullName || "",
           businessName: data.businessName || "",
@@ -51,48 +53,39 @@ const User_localfoodlicense = () => {
           email: data.email || "",
           mobileNumber: data.mobileNumber || "",
           businessAddress: data.businessAddress || "",
-          Status: data.Status || "In-Progress",
+          licenseRequireYears: data.licenseRequireYears || "",
           formPrice: data.formPrice || "",
           application_type: data.application_type || "",
           submitNote: data.submitNote || "",
           completedNote: data.completedNote || "",
+          Status: data.Status || "In-Progress",
           rejectedNote: data.rejectedNote || "",
-          licenseRequireYears: data.licenseRequireYears || "",
         });
       } catch (err) {
-        console.error("Error fetching license data: ", err);
         setError("Error fetching license data");
       } finally {
         setLoading(false);
       }
     };
-
     fetchLicenseData();
   }, [id]);
 
   const handleUpdate = async (event) => {
     event.preventDefault();
     const formData = new FormData();
-
     for (const key in licenseData) {
       formData.append(key, licenseData[key]);
     }
-
     for (const key in documents) {
       if (documents[key]) {
-        formData.append(key, documents[key]);
+        formData.append(`documents.${key}`, documents[key]);
       }
     }
-
     try {
       const response = await axios.put(
         `http://192.168.1.50:5000/api/localFoodLicense/updateLocalFoodLicense/${id}`,
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
       toast.success(response.data.message);
     } catch (error) {
@@ -113,11 +106,9 @@ const User_localfoodlicense = () => {
   };
 
   if (loading) return <div className="text-center mt-10">Loading...</div>;
-  if (error)
-    return <div className="text-center mt-10 text-red-500">{error}</div>;
+  if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
-  const inputClass =
-    "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm";
+  const inputClass = "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm";
   const labelClass = "block text-sm font-medium text-gray-700";
 
   return (
@@ -125,15 +116,11 @@ const User_localfoodlicense = () => {
       <div className="max-w-3xl mx-auto">
         <div className="bg-white shadow-xl rounded-lg overflow-hidden">
           <div className="px-4 py-5 sm:p-6">
-            <h1 className="text-3xl font-bold text-center text-gray-900 mb-8">
-              Local Food License Application
-            </h1>
-
+            <h1 className="text-3xl font-bold text-center text-gray-900 mb-8">Local Food License</h1>
             <form onSubmit={handleUpdate} className="space-y-6">
+              {/* Form Inputs Here... */}
               <div>
-                <label className={labelClass} htmlFor="fullName">
-                  Full Name
-                </label>
+                <label className={labelClass} htmlFor="fullName">Full Name</label>
                 <input
                   id="fullName"
                   name="fullName"
@@ -146,9 +133,7 @@ const User_localfoodlicense = () => {
               </div>
 
               <div>
-                <label className={labelClass} htmlFor="businessName">
-                  Business Name
-                </label>
+                <label className={labelClass} htmlFor="businessName">Business Name</label>
                 <input
                   id="businessName"
                   name="businessName"
@@ -161,9 +146,7 @@ const User_localfoodlicense = () => {
               </div>
 
               <div>
-                <label className={labelClass} htmlFor="natureOfBusiness">
-                  Nature of Business
-                </label>
+                <label className={labelClass} htmlFor="natureOfBusiness">Nature of Business</label>
                 <input
                   id="natureOfBusiness"
                   name="natureOfBusiness"
@@ -176,9 +159,7 @@ const User_localfoodlicense = () => {
               </div>
 
               <div>
-                <label className={labelClass} htmlFor="ownerQualification">
-                  Owner Qualification
-                </label>
+                <label className={labelClass} htmlFor="ownerQualification">Owner Qualification</label>
                 <input
                   id="ownerQualification"
                   name="ownerQualification"
@@ -191,24 +172,7 @@ const User_localfoodlicense = () => {
               </div>
 
               <div>
-                <label className={labelClass} htmlFor="email">
-                  Email
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  className={inputClass}
-                  value={licenseData.email}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className={labelClass} htmlFor="mobileNumber">
-                  Mobile Number
-                </label>
+                <label className={labelClass} htmlFor="mobileNumber">Mobile Number</label>
                 <input
                   id="mobileNumber"
                   name="mobileNumber"
@@ -221,9 +185,7 @@ const User_localfoodlicense = () => {
               </div>
 
               <div>
-                <label className={labelClass} htmlFor="businessAddress">
-                  Business Address
-                </label>
+                <label className={labelClass} htmlFor="businessAddress">Business Address</label>
                 <input
                   id="businessAddress"
                   name="businessAddress"
@@ -236,46 +198,7 @@ const User_localfoodlicense = () => {
               </div>
 
               <div>
-                <label className={labelClass} htmlFor="Status">
-                  Status
-                </label>
-                <select
-                disabled
-                  id="Status"
-                  name="Status"
-                  className={inputClass}
-                  value={licenseData.Status}
-                  onChange={handleInputChange}
-                  required
-                >
-                  {statusEnum.map((status) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {licenseData.Status === "Rejected" && (
-                <div>
-                  <label className={labelClass} htmlFor="rejectedNote">
-                    Rejected Note
-                  </label>
-                  <textarea
-                  disabled
-                    id="rejectedNote"
-                    name="rejectedNote"
-                    className={inputClass}
-                    value={licenseData.rejectedNote}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              )}
-
-              <div>
-                <label className={labelClass} htmlFor="licenseRequireYears">
-                  License Require Years
-                </label>
+                <label className={labelClass} htmlFor="licenseRequireYears">License Require Years</label>
                 <input
                   id="licenseRequireYears"
                   name="licenseRequireYears"
@@ -287,11 +210,40 @@ const User_localfoodlicense = () => {
                 />
               </div>
 
+              <div>
+                <label className={labelClass} htmlFor="Status">Status</label>
+                <select
+                  disabled
+                  id="Status"
+                  name="Status"
+                  className={inputClass}
+                  value={licenseData.Status}
+                  onChange={handleInputChange}
+                  required
+                >
+                  {statusEnum.map((status) => (
+                    <option key={status} value={status}>{status}</option>
+                  ))}
+                </select>
+              </div>
+
+              {licenseData.Status === "Rejected" && (
+                <div>
+                  <label className={labelClass} htmlFor="rejectedNote">Rejected Note</label>
+                  <textarea
+                    disabled
+                    id="rejectedNote"
+                    name="rejectedNote"
+                    className={inputClass}
+                    value={licenseData.rejectedNote}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              )}
+
               {/* Document Uploads */}
               <div>
-                <label className={labelClass} htmlFor="aadharCard">
-                  Aadhar Card
-                </label>
+                <label className={labelClass} htmlFor="aadharCard">Aadhar Card</label>
                 <input
                   id="aadharCard"
                   name="aadharCard"
@@ -303,9 +255,7 @@ const User_localfoodlicense = () => {
               </div>
 
               <div>
-                <label className={labelClass} htmlFor="panCard">
-                  PAN Card
-                </label>
+                <label className={labelClass} htmlFor="panCard">Pan Card</label>
                 <input
                   id="panCard"
                   name="panCard"
@@ -317,9 +267,7 @@ const User_localfoodlicense = () => {
               </div>
 
               <div>
-                <label className={labelClass} htmlFor="photo">
-                  Photo
-                </label>
+                <label className={labelClass} htmlFor="photo">Photo</label>
                 <input
                   id="photo"
                   name="photo"
@@ -330,46 +278,20 @@ const User_localfoodlicense = () => {
                 />
               </div>
 
+              {/* Submit Button */}
               <div>
-                <label className={labelClass} htmlFor="electricBill">
-                  Electric Bill
-                </label>
-                <input
-                  id="electricBill"
-                  name="electricBill"
-                  type="file"
-                  className={inputClass}
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
+                <button
+                  type="submit"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                >
+                  Update License
+                </button>
               </div>
-
-              <div>
-                <label className={labelClass} htmlFor="rentAggrement">
-                  Rent Agreement
-                </label>
-                <input
-                  id="rentAggrement"
-                  name="rentAggrement"
-                  type="file"
-                  className={inputClass}
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-              >
-                Update License
-              </button>
             </form>
-
-            <ToastContainer />
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

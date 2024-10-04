@@ -156,6 +156,7 @@ import User_gazette_name from './pages/UserDashboard/User_gazette_name';
 import User_gazette_dob from "./pages/UserDashboard/User_gazette_dob"
 import User_gazette_religon from "./pages/UserDashboard/User_gazette_religon"
 import User_gstregistration from "./pages/UserDashboard/User_gstregistration"
+import User_votternew from './pages/UserDashboard/User_votternew';
 
 
 function App() {
@@ -296,6 +297,7 @@ function Dashboardroutes({ sidebarOpen, setSidebarOpen }) {
             <Route path="transactionHistory" element={<TransactionHistory />} />
             <Route path='user_udyam/:id' element={<User_Udyam/>}/>
             <Route path="user_shiftvoter/:id" element={<User_shiftvoter/>}/>
+            <Route path='user_newvoter/:id' element={<User_votternew/>}/>
             <Route path='user_individualpancard/:id' element={<User_individualpancard/>}/>
             <Route path="User_companypancard/:id" element={<User_companypancard/>}/>
             <Route path='User_learninglicense/:id' element={<User_Learning/>}/>

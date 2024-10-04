@@ -494,13 +494,6 @@ const User_shiftvoter = () => {
                         />
                       </div>
                     )}
-            
-                               
-
-                                {/* Status Section */}
-                               
-
-                                {/* Update Button */}
                                 <div className="col-span-2">
                                     <button
                                         type="submit"

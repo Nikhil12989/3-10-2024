@@ -93,13 +93,13 @@ const User_incomecertificate = () => {
         }
         for (const key in documents) {
             if (documents[key]) {
-                formData.append(key, documents[key]);
+              formData.append(`documents.${key}`, documents[key]); // Match the structure expected by the backend
             }
-        }
+          }
 
         try {
             const response = await axios.put(
-                `http://192.168.1.50:5000/api/incomeCertificate/update/${id}`,
+                `http://192.168.1.50:5000/api/incomeCertificate/updateincome-certificate/${id}`,
                 formData,
                 { headers: { "Content-Type": "multipart/form-data" } }
             );

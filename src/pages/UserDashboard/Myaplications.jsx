@@ -11,30 +11,24 @@ const statusStyles = {
 };
 
 const MyApplications = () => {
-    const [applications, setApplications] = useState([]); // State to hold all applications data
-    const [filteredApplications, setFilteredApplications] = useState([]); // State for filtered applications
-    const [loading, setLoading] = useState(true); // State for loading
-    const [error, setError] = useState(null); // State for errors
+    const [applications, setApplications] = useState([]);
+    const [filteredApplications, setFilteredApplications] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10; // Number of items per page
+    const itemsPerPage = 5; // Show only 5 forms per page
     const [auth] = useAuth(); // Use the Auth context to get user data
-    const navigate = useNavigate(); // Navigation for handling routing
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get('http://192.168.1.50:5000/api/getAll/Form11');
-                
-                // Log the response to check if the data is correct
                 console.log('API Response:', response.data);
                 
-                // Assuming API returns an array of applications
                 if (Array.isArray(response.data)) {
                     setApplications(response.data);
-                    
-                    // Check if user is available in auth context
                     if (auth.user && auth.user._id) {
-                        // Filter the applications based on user ID
                         const filtered = response.data.filter(item => item.user === auth.user._id);
                         setFilteredApplications(filtered);
                     } else {
@@ -43,7 +37,7 @@ const MyApplications = () => {
                 } else {
                     setError('Unexpected data format');
                 }
-                setLoading(false); // Set loading to false when data is fetched
+                setLoading(false);
             } catch (err) {
                 console.error('API Error:', err);
                 setError('Failed to fetch applications');
@@ -52,7 +46,7 @@ const MyApplications = () => {
         };
 
         fetchData();
-    }, [auth]); // Include auth in the dependency array
+    }, [auth]);
 
     const totalPages = Math.ceil(filteredApplications.length / itemsPerPage);
 
@@ -65,8 +59,8 @@ const MyApplications = () => {
     };
 
     const handleApplicationTypeClick = (applicationType, id) => {
-        const trimmedApplicationType = applicationType.trim(); // Trim the application type
-        console.log("Navigating to:", trimmedApplicationType, "with ID:", id); // Debugging line
+        const trimmedApplicationType = applicationType.trim();
+        console.log("Navigating to:", trimmedApplicationType, "with ID:", id);
         switch (trimmedApplicationType) {
             case "Voter Card":
                 navigate(`/dashboard/application_votercard/${id}`);
@@ -74,7 +68,6 @@ const MyApplications = () => {
             case "Shop Act":
                 navigate(`/dashboard/application_shopact/${id}`);
                 break;
-            
             case "Company GST":
                 navigate(`/dashboard/application_companygst/${id}`);
                 break;
@@ -90,19 +83,19 @@ const MyApplications = () => {
             case "State Food License":
                 navigate(`/dashboard/User_statefoodlicense/${id}`);
                 break;
-            case "Central Food License":  // Ensure this matches exactly
+            case "Central Food License":
                 navigate(`/dashboard/User_centralfoodlicense/${id}`);
                 break;
-            case "New VoterCard":  // Ensure this matches exactly
-                navigate(`/dashboard/application_newVoterid/${id}`);
+            case "New VoterCard":
+                navigate(`/dashboard/user_newvoter/${id}`);
                 break;
-            case "Food Manufacturing License":  // Ensure this matches exactly
+            case "Food Manufacturing License":
                 navigate(`/dashboard/User_foodmanufacturinglicense/${id}`);
                 break;
-            case "Domicile Certificate":  // Ensure this matches exactly
+            case "Domicile Certificate":
                 navigate(`/dashboard/application_domicile/${id}`);
                 break;
-            case "GST Registration":  // Ensure this matches exactly
+            case "GST Registration":
                 navigate(`/dashboard/User_gstregistration/${id}`);
                 break;
             case "Company Pancard":
@@ -142,12 +135,24 @@ const MyApplications = () => {
                 navigate(`/dashboard/User_incomecertificate/${id}`);
                 break;
             default:
-                console.log("Unknown application type:", trimmedApplicationType); // Logging unknown types
+                console.log("Unknown application type:", trimmedApplicationType);
         }
     };
+    
 
-    if (loading) return <div>Loading...</div>; // Show loading message
-    if (error) return <div>{error}</div>; // Show error message
+    // Pagination: Generate page numbers dynamically based on the current page
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+    }
+
+    const visiblePageNumbers = pageNumbers.slice(
+        Math.max(0, currentPage - 3),
+        Math.min(totalPages, currentPage + 2)
+    );
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
 
     return (
         <div className="min-h-screen bg-slate-100 p-4 sm:p-6">
@@ -171,7 +176,7 @@ const MyApplications = () => {
                                 <tr key={app._id} className="hover:bg-gray-50">
                                     <td
                                         className="px-4 py-3 text-sm text-blue-600 border border-gray-300 cursor-pointer"
-                                        onClick={() => handleApplicationTypeClick(app.application_type, app._id)} // Handle routing on click
+                                        onClick={() => handleApplicationTypeClick(app.application_type, app._id)}
                                     >
                                         {app.application_type}
                                     </td>
@@ -200,7 +205,20 @@ const MyApplications = () => {
                     >
                         Previous
                     </button>
-                    <span>Page {currentPage} of {totalPages}</span>
+                    
+                    {/* Render page numbers */}
+                    <div className="flex space-x-2">
+                        {visiblePageNumbers.map((number) => (
+                            <button
+                                key={number}
+                                onClick={() => handlePageChange(number)}
+                                className={`px-4 py-2 ${currentPage === number ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} rounded-lg shadow hover:bg-gray-300`}
+                            >
+                                {number}
+                            </button>
+                        ))}
+                    </div>
+
                     <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
